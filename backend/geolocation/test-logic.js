@@ -1,11 +1,17 @@
-// IP2Location - https://www.npmjs.com/package/ip2location-nodejs
-// IP2Location Node.js Library - https://ip2location-nodejs.readthedocs.io/en/latest/quickstart.html#query-geolocation-information-from-bin-database
 const {IP2Location} = require("ip2location-nodejs");
 
 let ip2location = new IP2Location();
 
-ip2location.open("./IP2LOCATION-LITE-DB3.BIN");
+ip2location.open("./geolocation/IP2LOCATION-LITE-DB3.BIN");
 
-let result = ip2location.getAll("8.8.8.8");
+testip = ['8.8.8.8', '2404:6800:4001:c01::67'];
 
-console.log(result);
+for (var x = 0; x < testip.length; x++) {
+	result = ip2location.getAll(testip[x]);
+	for (var key in result) {
+		console.log(key + ": " + result[key]);
+	}
+	console.log("--------------------------------------------------------------");
+}
+
+ip2location.close();
