@@ -79,16 +79,40 @@ describe('API Testing / Test the model routes', () => {
 
     //START:TODO - Implement the Test Cases
 
-    //Test Case 1 - TODO:
+    test('Test - GET /api/model/{id} with id=102995', async () => {
+        /**
+         * Sends a GET request to the '/api/model/:id' endpoint with the specified ID and awaits the response.
+         * @param {string} id - The ID of the model to retrieve.
+         * @returns {Promise<object>} - A promise that resolves to the response object.
+         */
+        let response = await request(app).get('/api/model/102995');        
+        expect(response.statusCode).toBe(200);
+        //fs.writeFileSync('response1.json', response.text);
+        var data = JSON.parse(response.text);
+        expect(data).toEqual(expect.objectContaining({ 'name': 'UWS Brownstone Prime' }));
+    });
 
 
-    /*Test Case 2 - TODO:
-        "200.20.0.88" = Rio De Janeiro
-        "2.152.105.111" = Barcelona
-        "8.210.96.219" = Hong Kong
-        "78.135.85.96" = Beyoglu, Turkey
-        "188.83.242.122" = Porta Portugal
-    */
+    test('Test - GET /api/model/ with x-forwarded-for-ip header', async () => {
+        /**
+         * Sends a GET request to the '/api/model' endpoint with the specified x-forwarded-for-ip header and awaits the response.
+         * @param {string} ip - The IP address to set in the x-forwarded-for-ip header.
+         * @returns {Promise<object>} - A promise that resolves to the response object.
+         */
+        let response = await request(app)
+            .get('/api/model')
+            .set('x-forwarded-for-ip', '200.20.0.88');
+        expect(response.statusCode).toBe(200);
+        let data = JSON.parse(response.text);
+        let listingsAndReviews = data.listingsAndReviews;
+        expect(Array.isArray(listingsAndReviews)).toBe(true);
+        for (let i = 0; i < listingsAndReviews.length; i++) {
+            let listing = listingsAndReviews[i];
+            expect(listing.address.country).toBe('Hong Kong');
+        }
+    });
+      
+    
 
     //END:TODO
 
